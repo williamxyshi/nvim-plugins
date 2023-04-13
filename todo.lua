@@ -17,20 +17,21 @@ function M.add_task()
   end
 end
 
+
 function M.toggle_task()
   local current_line = vim.api.nvim_get_current_line()
-  local new_line
+  local open_bracket_pos, close_bracket_pos = string.find(current_line, "%[[x ]%]")
 
-  if string.sub(current_line, 1, 3) == "[ ]" then
-    new_line = "[x]" .. string.sub(current_line, 4)
-  elseif string.sub(current_line, 1, 3) == "[x]" then
-    new_line = "[ ]" .. string.sub(current_line, 4)
+  if open_bracket_pos and close_bracket_pos then
+    local current_state = string.sub(current_line, open_bracket_pos + 1, close_bracket_pos - 1)
+    local new_state = current_state == " " and "x" or " "
+    local new_line = string.sub(current_line, 1, open_bracket_pos) .. new_state .. string.sub(current_line, close_bracket_pos)
+    vim.api.nvim_set_current_line(new_line)
   else
-    return
+    print("Error: No task brackets found.")
   end
-
-  vim.api.nvim_set_current_line(new_line)
 end
+
 
 function M.toggle_priority()
   local current_line = vim.api.nvim_get_current_line()
@@ -93,14 +94,14 @@ end
 
 
 -- Set keybindings
-vim.api.nvim_set_keymap('n', '<localleader>at', ':lua require("todo").add_task()<CR>', {noremap = true, silent = true})
-vim.api.nvim_set_keymap('n', '<localleader>tt', ':lua require("todo").toggle_task()<CR>', {noremap = true, silent = true})
-vim.api.nvim_set_keymap('n', '<localleader>tp', ':lua require("todo").toggle_priority()<CR>', {noremap = true, silent = true})
-vim.api.nvim_set_keymap('n', '<localleader>su', ':lua require("todo").swap_task(-1)<CR>', {noremap = true, silent = true})
-vim.api.nvim_set_keymap('n', '<localleader>sd', ':lua require("todo").swap_task(1)<CR>', {noremap = true, silent = true})
-vim.api.nvim_set_keymap('n', '<localleader>ts', ':lua require("todo").toggle_subtask()<CR>', {noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '<localleader>at', ':lua require("nvim-plugins.todo").add_task()<CR>', {noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '<localleader>tt', ':lua require("nvim-plugins.todo").toggle_task()<CR>', {noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '<localleader>tp', ':lua require("nvim-plugins.todo").toggle_priority()<CR>', {noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '<localleader>su', ':lua require("nvim-plugins.todo").swap_task(-1)<CR>', {noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '<localleader>sd', ':lua require("nvim-plugins.todo").swap_task(1)<CR>', {noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '<localleader>ts', ':lua require("nvim-plugins.todo").toggle_subtask()<CR>', {noremap = true, silent = true})
 
-vim.api.nvim_set_keymap('n', '<localleader>ab', ':lua require("todo").add_blank_task()<CR>', {noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '<localleader>ab', ':lua require("nvim-plugins.todo").add_blank_task()<CR>', {noremap = true, silent = true})
 
 -- Vim normal mode command to open the todo list page
 vim.cmd("command! Todo :e " .. todo_file_path)
