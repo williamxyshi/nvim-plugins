@@ -1,2 +1,6 @@
 # nvim-plugins
-my plugs >:)
+
+my plugs >:) include : 
+
+    vim.opt.runtimepath:append('/Users/will/.confg/nvim/lua/nvim-plugins')
+    local my_plugins = require('bundled')
