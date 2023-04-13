@@ -1,0 +1,2 @@
+# nvim-plugins
+my plugs >:)
